@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/viewPatient.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>View Record - NBA HEALTH CENTRE</title>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/web_logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-menu">
+            <h2>NBA HEALTH CENTRE</h2>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-injured"></i> Patients ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatient.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="viewRecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Doctors ▾</a>
+                <div class="dropdown-content">
+                    <a href="adddoctor.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="doctorviewrecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+             <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Patient History ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatientHistory.html"><i class="fas fa-book"></i> Add Patient History</a>
+                    <a href="patientHistory.html"><i class="fas fa-book"></i> View Patient History</a>
+                </div>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="Settings.php"><i class="fas fa-cog"></i> Settings</a>
+                <a href="backend/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Record Content -->
+    <div class="view-record-container">
+        <div class="table-title">Patient Record</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case No</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                    <th>Doctor</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="patientTableBody">
+                <!-- Dynamic Records will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const parent = event.target.closest('.dropdown');
+            parent.classList.toggle('active');
+        }
+
+        function viewPatient(caseNo) {
+            window.location.href = `viewPatientDetails.html?case_no=${caseNo}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('backend/getPatients.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('patientTableBody');
+                    tbody.innerHTML = '';
+
+                    data.forEach(patient => {
+                        const row = `
+                            <tr>
+                                <td>${patient.case_no}</td>
+                                <td>${patient.name}</td>
+                                <td>${patient.gender}</td>
+                                <td>${patient.phone}</td>
+                                <td>${patient.doctor_assigned}</td>
+                                <td class="action-group">
+                                    <button class="view-btn action-btn" onclick="viewPatient('${patient.case_no}')"><i class="fas fa-eye"></i> View</button>
+                                </td> 
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching patients:", error);
+                });
+        });
+    </script>
+</body>
+
+</html>

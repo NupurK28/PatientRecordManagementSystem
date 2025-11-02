@@ -1,0 +1,93 @@
+*{ 
+    /*Reset Some Defualt Styles*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*Body and Background */
+body{
+    background-color: #f4f7fc;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/*Container to center the content*/
+.container{
+    text-align: center;
+    padding: 40px;
+    background:#0c0c0c17;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+/*logo and site name*/
+.logo-class{
+    margin-bottom: 30px;
+}
+
+.logo{
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.site-name{
+    font-size: 24px;
+    font-weight: bold;
+    color:#333;
+}
+
+/*Form*/
+.login-form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form input{
+    padding: 12px;
+    font-size: 16px;
+    border:1px solid #150f0f;
+    border-radius: 5px;
+    transition:  border-color 0.9s;
+}
+
+.login-form input:focus{
+    border-color:  #5c67f2;
+}
+
+/*Submit input button*/
+.submit-btn{
+    padding: 14px;
+    background-color: #5c67f2;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.9s;
+}
+
+.submit-btn:hover{
+    background-color: #4a54e1;
+}
+
+/*Links*/
+.links-container{
+    margin-top: 20px;
+}
+.links-container a{
+    color:#5c67f2;
+    font-size: 14px;
+    text-decoration: none;
+    display: block;
+    margin: 5px 0;
+}
+.links-container a:hover{
+    text-decoration: underline;
+    color:#0919f4;
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/addPatient.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Add Patient- NBA HEALTH CENTRE</title>
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/web_logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-menu">
+            <h2>NBA HEALTH CENTRE</h2>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-injured"></i> Patients ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatient.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="viewRecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Doctors ▾</a>
+                <div class="dropdown-content">
+                    <a href="adddoctor.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="doctorviewrecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle"><i class="fas fa-user-doctor"></i> Patient History ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatientHistory.html"><i class="fas fa-book"></i> Add Patient History</a>
+                    <a href="patientHistory.html"><i class="fas fa-book"></i> View Patient History</a>
+                </div>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="backend/Settings.php"><i class="fas fa-cog"></i> Settings</a>
+                <a href="backend/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="form-container">
+        <div class="form-title">Add Patient</div>
+        <div class="form-box">
+            <form action="backend/addPatientHandler.php" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="caseNo">Case No:</label>
+                    <input type="text" name="caseNo" id="caseNo">
+                </div>
+                <div class="form-group">
+                    <label for="name">Name of Patient:</label>
+                    <input type="text" name="name" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select name="gender" id="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" name="dob" id="dob">
+                </div>
+                <div class="form-group">
+                    <label for="guardian">Guardian Name:</label>
+                    <input type="text" name="guardian" id="guardian">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" name="phone" id="phone">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea name="address" id="address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="doctor">Doctor Assigned:</label>
+                    <input type="text" name="doctor" id="doctor" list="doctorList">
+                    <datalist id="doctorList"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="symptoms">Symptoms:</label>
+                    <textarea name="symptoms" id="symptoms" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="admission">Admission Date:</label>
+                    <input type="date" name="admission" id="admission">
+                </div>
+                <div class="form-group">
+                    <label for="blood">Blood Group:</label>
+                    <select name="blood" id="blood">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="photo">Upload Photo:</label>
+                    <input type="file" name="photo" id="photo">
+                </div>
+                <div class="form-group">
+                    <label for="history">Medical History:</label>
+                    <textarea name="history" id="history" rows="3"></textarea>
+                </div>
+                <button type="submit" class="submit-btn"> Add Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const parent = event.target.closest('.dropdown');
+            parent.classList.toggle('active');
+        }
+
+
+        fetch('backend/get_doctors.php')
+            .then(response => response.json())
+            .then(data => {
+                const doctorList = document.getElementById('doctorList');
+                data.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.name; // only using the name
+                    doctorList.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching doctor names:', error));
+    </script>
+</body>
+
+</html>

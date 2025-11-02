@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Login - NBA Health Centre</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/patientsview.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <img src="img/web_logo.png" alt="NBA Health Centre Logo" />
+    <h2>Patient Login</h2>
+    <div id="errorMsg"></div>
+    <form id="loginForm">
+      <input type="text" id="caseNo" placeholder="Enter Case Number" required />
+      <input type="email" id="email" placeholder="Enter Registered Email" required />
+      <button type="submit" id="loginbtn">Login</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", handleLogin);
+
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const caseNo = document.getElementById("caseNo").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      fetch("backend/patientLogin.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `case_no=${encodeURIComponent(caseNo)}&email=${encodeURIComponent(email)}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = "LogedpatientHistory.html";
+        } else {
+          document.getElementById("errorMsg").textContent = data.message;
+        }
+      })
+      .catch(() => {
+        document.getElementById("errorMsg").textContent = "Something went wrong.";
+      });
+    }
+  </script>
+</body>
+</html>

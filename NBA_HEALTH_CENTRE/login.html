@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA HEALTH CENTRE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/validateLogin.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-class">
+            <img src="img/web_logo.png" alt="Logo" class="logo">
+            <h1 class="site-name">NBA HEALTH CENTRE</h1>
+        </div>
+
+        <form class="login-form" action="backend/Login.php" method="POST" >
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="submit" value="Login" class="submit-btn" >
+
+            <div class="links-container">
+                <a href="forgotPassword.html" class="forgot-password"> Forgot Password</a>
+                <a href="signup.html" class="create-account"> Create New Account</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

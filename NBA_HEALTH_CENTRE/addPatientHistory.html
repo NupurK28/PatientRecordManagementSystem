@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Add Patient History - NBA Health Centre</title>
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/addPatientHsitory.css" />
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/web_logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-menu">
+            <h2>NBA HEALTH CENTRE</h2>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-injured"></i> Patients ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatient.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="viewRecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Doctors ▾</a>
+                <div class="dropdown-content">
+                    <a href="adddoctor.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="doctorviewrecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Patient History ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatientHistory.html"><i class="fas fa-book"></i> Add Patient History</a>
+                    <a href="patientHistory.html"><i class="fas fa-book"></i> View Patient History</a>
+                </div>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="Settings.php"><i class="fas fa-cog"></i> Settings</a>
+                <a href="backend/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-box">
+            <h2>Add Patient Visit Record</h2>
+            <form id="visitForm">
+                <div class="form-group">
+                    <label for="case_no">Case Number</label>
+                    <input type="text" id="case_no" name="case_no" required />
+                    <span id="caseCheckMsg" style="color: red; font-size: 14px;"></span>
+                </div>
+
+                <div id="patientPreview"
+                    style="display:none; border: 1px solid #ccc; padding: 10px; border-radius: 8px; margin-top: 10px; background-color: #f9f9f9;">
+                    <h3>👤 Patient Preview</h3>
+                    <p><strong>Name:</strong> <span id="previewName"></span></p>
+                    <p><strong>Gender:</strong> <span id="previewGender"></span></p>
+                    <p><strong>Phone:</strong> <span id="previewPhone"></span></p>
+                    <p><strong>Email:</strong> <span id="previewEmail"></span></p>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="visit_date">Visit Date</label>
+                    <input type="date" id="visit_date" name="visit_date" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason for Visit</label>
+                    <textarea id="reason" name="reason" rows="2" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="medicine">Medicine Prescribed</label>
+                    <textarea id="medicine" name="medicine" rows="2" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor">Doctor Name</label>
+                    <input type="text" id="doctor" name="doctor" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Additional Notes</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+
+                <button type="submit">Submit Record</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const parent = event.target.closest('.dropdown');
+            parent.classList.toggle('active');
+        }
+
+        document.getElementById("visitForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("backend/addPatientHistory.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Patient history added successfully!");
+                        document.getElementById("visitForm").reset();
+                    } else {
+                        alert("Error: " + (data.message || "Failed to add record."));
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("Something went wrong.");
+                });
+        });
+
+        document.getElementById("case_no").addEventListener("blur", function () {
+            const caseNo = this.value.trim();
+            const msgSpan = document.getElementById("caseCheckMsg");
+
+            if (caseNo === "") {
+                msgSpan.textContent = "";
+                return;
+            }
+
+            fetch(`backend/checkCaseNo.php?case_no=${encodeURIComponent(caseNo)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        msgSpan.style.color = "green";
+                        msgSpan.textContent = "✔️ Case number found.";
+                    } else {
+                        msgSpan.style.color = "red";
+                        msgSpan.textContent = "❌ Case number not found.";
+                    }
+                })
+                .catch(() => {
+                    msgSpan.style.color = "red";
+                    msgSpan.textContent = "⚠️ Error checking case number.";
+                });
+        });
+
+        document.getElementById("case_no").addEventListener("blur", function () {
+            const caseNo = this.value.trim();
+            const msgSpan = document.getElementById("caseCheckMsg");
+            const previewBox = document.getElementById("patientPreview");
+
+            // Reset
+            msgSpan.textContent = "";
+            previewBox.style.display = "none";
+
+            if (caseNo === "") return;
+
+            fetch(`backend/checkCaseNo.php?case_no=${encodeURIComponent(caseNo)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        msgSpan.style.color = "green";
+                        msgSpan.textContent = "✔️ Case number found.";
+
+                        // Now fetch patient details
+                        fetch(`backend/getPatientById.php?case_no=${encodeURIComponent(caseNo)}`)
+                            .then(res => res.json())
+                            .then(patient => {
+                                if (!patient.error) {
+                                    document.getElementById("previewName").textContent = patient.name;
+                                    document.getElementById("previewGender").textContent = patient.gender;
+                                    document.getElementById("previewPhone").textContent = patient.phone;
+                                    document.getElementById("previewEmail").textContent = patient.email || "-";
+                                    previewBox.style.display = "block";
+                                }
+                            });
+                    } else {
+                        msgSpan.style.color = "red";
+                        msgSpan.textContent = "❌ Case number not found.";
+                        previewBox.style.display = "none";
+                    }
+                })
+                .catch(() => {
+                    msgSpan.style.color = "red";
+                    msgSpan.textContent = "⚠️ Error checking case number.";
+                });
+        });
+
+    </script>
+</body>
+
+</html>

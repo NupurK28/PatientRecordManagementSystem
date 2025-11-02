@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit Patient - NBA Health Centre</title>
+    <!-- <link rel="stylesheet" href="css/form.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/editPatient.css" />
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function fetchPatientData() {
+            const caseNo = new URLSearchParams(window.location.search).get("case_no");
+
+            fetch(`backend/getPatientById.php?case_no=${caseNo}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    document.getElementById("case_no").value = data.case_no;
+                    document.getElementById("name").value = data.name;
+                    document.getElementById("gender").value = data.gender;
+                    document.getElementById("phone").value = data.phone;
+                    document.getElementById("email").value = data.email || '';
+                    document.getElementById("guardian_name").value = data.guardian_name || '';
+                    document.getElementById("address").value = data.address || '';
+                    document.getElementById("doctor").value = data.doctor_assigned;
+                });
+        }
+
+        // // function updatePatient(event) {
+        // event.preventDefault();
+
+        // const formData = new FormData(document.getElementById("editForm"));
+
+
+
+        // fetch("backend/updatePatient.php", {
+        //     method: "POST",
+        //     body: formData,
+        // })
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         alert(data.message || "Patient updated!");
+        //         if (!data.error) goBack();
+        //     });
+        // }
+
+        function updatePatient(event) {
+            event.preventDefault();
+
+            const formData = new FormData(document.getElementById("editForm"));
+
+            fetch("backend/updatePatient.php", {
+                method: "POST",
+                body: formData,
+            })
+                .then(res => res.text())  // Get raw text response
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);  // Try parse JSON
+                        alert(data.message || "Patient updated!");
+                        if (!data.error) goBack();
+                    } catch (error) {
+                        console.error("Invalid JSON from server:", text);
+                        alert("Server returned unexpected response. See console for details.");
+                    }
+                })
+                .catch(error => {
+                    alert("Fetch error: " + error.message);
+                    console.error(error);
+                });
+        }
+
+
+        function closeCase() {
+            const caseNo = document.getElementById("case_no").value;
+
+            if (!caseNo) {
+                alert("No case number found.");
+                return;
+            }
+
+            if (!confirm("Are you sure you want to close this case?")) return;
+
+            fetch("backend/closeCase.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `case_no=${encodeURIComponent(caseNo)}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || "Case closed successfully.");
+                    if (!data.error) goBack();
+                })
+                .catch(error => {
+                    alert("An error occurred: " + error.message);
+                });
+        }
+
+
+        window.onload = fetchPatientData;
+    </script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/web_logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-menu">
+            <h2>NBA HEALTH CENTRE</h2>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-injured"></i> Patients ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatient.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="viewRecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Doctors ▾</a>
+                <div class="dropdown-content">
+                    <a href="#"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="#"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle"><i class="fas fa-user-doctor"></i> Patient History ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatientHistory.html"><i class="fas fa-book"></i> Add Patient History</a>
+                    <a href="patientHistory.html"><i class="fas fa-book"></i> View Patient History</a>
+                </div>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="Settings.php"><i class="fas fa-cog"></i> Settings</a>
+                <a href="backend/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="form-container">
+        <h2>Edit Patient</h2>
+        <form id="editForm" onsubmit="updatePatient(event)">
+            <input type="hidden" name="case_no" id="case_no" />
+            <label>Name: <input type="text" name="name" id="name" required /></label>
+            <label>Gender: <input type="text" name="gender" id="gender" required /></label>
+            <label>Phone: <input type="text" name="phone" id="phone" required /></label>
+            <label>Email: <input type="email" name="email" id="email" /></label>
+            <label>Guardian: <input type="text" name="guardian_name" id="guardian_name" /></label>
+            <label>Address: <textarea name="address" id="address"></textarea></label>
+            <label>Doctor Assigned: <input type="text" name="doctor_assigned" id="doctor" required /></label>
+            <div class="btn-group">
+                <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+                <button type="button" onclick="goBack()"><i class="fas fa-arrow-left"></i> Cancel</button>
+                <button type="button" class="close-btn" onclick="closeCase()">
+                    <i class="fas fa-times-circle"></i> Close Case
+                </button>
+            </div>
+
+
+        </form>
+    </div>
+</body>
+
+</html>

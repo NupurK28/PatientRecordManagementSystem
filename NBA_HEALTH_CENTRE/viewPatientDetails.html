@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Patient Details - NBA Health Centre</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/viewPatient2.css" />
+    <script>
+        // Go back function
+        function goBack() {
+            window.history.back();
+        }
+
+        // Delete patient function triggered by button
+        function deletePatient() {
+            const caseNo = document.getElementById('case_no').textContent.trim();
+
+            if (!caseNo) {
+                alert("No case number found.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete patient with Case No: ${caseNo}? This action cannot be undone.`)) return;
+
+            fetch(`backend/deletePatient.php?case_no=${caseNo}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `case_no=${encodeURIComponent(caseNo)}`
+            })
+                .then(async response => {
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        console.log("Response:", data);
+                        if (!data.error) {
+                            alert(data.message || "Deleted!");
+                            window.location.href = 'viewRecord.html';
+                        } else {
+                            alert(data.message || "Could not delete.");
+                        }
+                    } catch (e) {
+                        console.error("Invalid JSON from server:", text);
+                        alert("Server error. Check console and backend.");
+                    }
+                });
+
+        }
+
+        // Fetch patient data on page load
+        function fetchPatientData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const caseNo = urlParams.get('case_no');
+
+            if (!caseNo) {
+                alert("No case number provided.");
+                return;
+            }
+
+            fetch(`backend/getPatientById.php?case_no=${caseNo}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    document.getElementById('case_no').textContent = data.case_no;
+                    document.getElementById('name').textContent = data.name;
+                    document.getElementById('gender').textContent = data.gender;
+                    document.getElementById('phone').textContent = data.phone;
+                    document.getElementById('email').textContent = data.email || '-';
+                    document.getElementById('guardian').textContent = data.guardian_name || '-';
+                    document.getElementById('address').textContent = data.address || '-';
+                    document.getElementById('doctor').textContent = data.doctor_assigned;
+                })
+                .catch(error => {
+                    console.error("Error fetching patient data:", error);
+                    alert("Failed to load patient data.");
+                });
+        }
+
+        // Print the patient record
+        function printRecord() {
+            window.print();
+        }
+
+        // Run fetch on page load
+        window.onload = fetchPatientData;
+    </script>
+</head>
+
+<body>
+    <div class="print-container">
+        <header>
+            <img src="img/web_logo.png" alt="NBA Logo" class="logo" />
+            <h1>NBA Health Centre</h1>
+            <h2>Patient Detail Report</h2>
+        </header>
+
+        <div class="patient-card">
+            <div class="row"><span>Case No:</span>
+                <p id="case_no"></p>
+            </div>
+            <div class="row"><span>Name:</span>
+                <p id="name"></p>
+            </div>
+            <div class="row"><span>Gender:</span>
+                <p id="gender"></p>
+            </div>
+            <div class="row"><span>Phone:</span>
+                <p id="phone"></p>
+            </div>
+            <div class="row"><span>Email:</span>
+                <p id="email"></p>
+            </div>
+            <div class="row"><span>Guardian:</span>
+                <p id="guardian"></p>
+            </div>
+            <div class="row"><span>Address:</span>
+                <p id="address"></p>
+            </div>
+            <div class="row"><span>Doctor Assigned:</span>
+                <p id="doctor"></p>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="update-btn"
+                onclick="window.location.href='editPatient.html?case_no=' + encodeURIComponent(document.getElementById('case_no').textContent.trim())">
+                <i class="fas fa-edit"></i> Update
+            </button>
+            <button class="delete-btn" onclick="deletePatient()"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+
+        <div class="print-btn-container">
+            <button onclick="printRecord()">🖨️ Print Record</button>
+        </div>
+
+        <center>
+            <div class="top-actions">
+                <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+        </center>
+    </div>
+</body>
+
+</html>

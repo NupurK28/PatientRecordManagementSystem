@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Medical History</title>
+    <link rel="stylesheet" href="css/patientsview.css">
+</head>
+
+<body>
+    <button onclick="logout()" id="logoutBtn">Logout</button>
+    <center><img src="img/web_logo.png"></center>
+    <h2>Your Medical History</h2>
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Reason</th>
+                <th>Prescription</th>
+                <th>Doctor</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        fetch("backend/getLogedPatientHistory.php")
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    location.href = "patientLogin.html";
+                } else {
+                    const tbody = document.querySelector("#historyTable tbody");
+                    data.forEach(entry => {
+                        const row = `<tr>
+              <td>${entry.visit_date}</td>
+              <td>${entry.reason}</td>
+              <td>${entry.medicine}</td>
+              <td>${entry.doctor}</td>
+              <td>${entry.notes}</td>
+            </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                }
+            });
+
+        function logout() {
+            fetch("backend/Patientlogout.php").then(() => location.href = "patientLogin.html");
+        }
+    </script>
+</body>
+
+</html>

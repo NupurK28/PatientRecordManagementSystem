@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Dashboard - NBA HEALTH CENTRE</title>
+    <!-- <style>
+        .dropdown{
+            position: relative;
+        }
+
+        .dropdown-content{
+            display:none;
+            flex-direction: column; 
+            background-color:  #2c3e50;
+       
+        }
+        .dropdown-content a{
+            padding-left: 40px;
+        }
+        .dropdown.active .dropdown-content{
+            display:flex;
+        }
+        
+    </style> -->
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/web_logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-menu">
+            <h2>NBA HEALTH CENTRE</h2>
+            <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-injured"></i> Patients ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatient.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="viewRecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" onclick="toggleDropdown(event)"><i class="fas fa-user-doctor"></i> Doctors ▾</a>
+                <div class="dropdown-content">
+                    <a href="adddoctor.html"><i class="fas fa-plus-circle"></i> Add Record</a>
+                    <a href="doctorviewrecord.html"><i class="fas fa-eye"></i> View Record</a>
+                </div>
+            </div>
+            <a href="patientHistory.html"><i class="fas fa-book"></i> Patient Record</a><div class="dropdown">
+                <a href="#" class="dropdown-toggle"><i class="fas fa-user-doctor"></i> Patient History ▾</a>
+                <div class="dropdown-content">
+                    <a href="addPatientHistory.html"><i class="fas fa-book"></i> Add Patient History</a>
+                    <a href="patientHistory.html"><i class="fas fa-book"></i> View Patient History</a>
+                </div>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="Settings.php"><i class="fas fa-cog"></i> Settings</a>
+                <a href="backend/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="dashboard-title"> Dashboard Overview</div>
+        <div class="cards">
+            <div class="card">
+                <h3>Total Patients</h3>
+                <div class="number" id="totalPatients">1200</div>
+            </div>
+            <div class="card">
+                <h3>Active Cases</h3>
+                <div class="number" id="activeCases">350</div>
+            </div>
+            <div class="card">
+                <h3>Closed Cases</h3>
+                <div class="number" id="closedCases">850</div>
+            </div>
+        </div>
+        <canvas id="casesChart" width="400" height="200"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js" defer></script>
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const parent = event.target.closest('.dropdown');
+            parent.classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>
